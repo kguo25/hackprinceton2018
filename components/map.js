@@ -8,10 +8,22 @@ import {
 import { Marker } from 'react-native-maps';
 import MapView from 'react-native-maps';
 import { AppRegistry } from 'react-native'
+import * as firebase from 'firebase';
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBFdHmbAzPfZpHcNJw12Eq6J2itWwd8uwI",
+  authDomain: "hack-princeton-dc555.firebaseapp.com",
+  databaseURL: "https://hack-princeton-dc555.firebaseio.com/",
+  storageBucket: "gs://hack-princeton-dc555.appspot.com",
+};
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+var database = firebaseApp.database();
 
 const initialRegion = {
   latitude: 40.3573,
-  longitude: 74.6672,
+  longitude: -74.6672,
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421,
 }
@@ -35,6 +47,20 @@ const styles = StyleSheet.create({
   },
 });
 
+const testMarkers = [
+  {latlng: {
+      latitude: 40,
+      longitude: -70,
+    }
+  },
+  {latlng: 
+    {
+      latitude: 41,
+      longitude: -76,
+    }
+  }
+]
+
 type Props = {};
 export default class MyMap extends Component {
   map = null;
@@ -43,6 +69,7 @@ export default class MyMap extends Component {
     mapRegion: null,
     lastLat: null,
     lastLong: null,
+    markers: null,
   }
 
   setRegion(region) {
@@ -85,7 +112,19 @@ export default class MyMap extends Component {
       latitudeDelta:  0.00922*1.5,
       longitudeDelta: 0.00421*1.5
     }
+    let pressedLat = e.nativeEvent.coordinate.latitude;
+    let pressedLng = e.nativeEvent.coordinate.longitude
     this.onRegionChange(region, region.latitude, region.longitude);
+    database.ref('markers').once("value").then(function(snapshot) {
+      let databaseVals = snapshot.val();
+      let updatedVals = [];
+      for (let tuple of databaseVals) {
+        if (tuple.longitude > (pressedLat-0.05) && tuple.longitude < (pressedLat+0.05) && tuple.latitude > (pressedLat-0.05) && tuple.latitude < pressedLat+0.05) {
+          updatedVals.push(tuple);
+        }
+      }
+      //send updatedVals to new page
+    });
   }
 
   render() {
@@ -96,16 +135,10 @@ export default class MyMap extends Component {
           region={this.state.mapRegion}
           showsUserLocation={true}
           followUserLocation={true}
-          onRegionChange={this.onRegionChange.bind(this)}>
-          <MapView.Marker
-            coordinate={{
-              latitude: (this.state.lastLat + 0.00050) || -36.82339,
-              longitude: (this.state.lastLong + 0.00050) || -73.03569,
-            }}>
-            <View>
-            </View>
-          </MapView.Marker>
+          onRegionChange={this.onRegionChange.bind(this)}
+          onPress={e => this.onMapPress(e)}>
         </MapView>
+
       </View>
     );
   }
