@@ -4463,6 +4463,10 @@ react-is@^16.3.0:
   version "16.3.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.3.0.tgz#f0e8bfd8c09b480dd610b8639d9ed65c13601224"
 
+react-native-image-crop-picker@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.20.0.tgz#29b8df35eb17ff7ad61524ec09832f49e552427d"
+
 react-native-maps@^0.20.1:
   version "0.20.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.20.1.tgz#b5247a9a26446b2e1ffc3f680db8ba6ccc960096"

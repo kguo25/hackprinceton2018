@@ -10,6 +10,9 @@ import {
   NavigatorIOS,
 } from 'react-native';
 
+import DisplayPhoto from './DisplayPhoto';
+import ImagePicker from 'react-native-image-crop-picker';
+
 // Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBFdHmbAzPfZpHcNJw12Eq6J2itWwd8uwI",
@@ -17,13 +20,48 @@ const firebaseConfig = {
   databaseURL: "https://hack-princeton-dc555.firebaseio.com/",
   storageBucket: "gs://hack-princeton-dc555.appspot.com",
 };
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+let firebaseApp;
+try {
+  firebaseApp = firebase.initializeApp(firebaseConfig)
+  } catch (err) {
+  // we skip the "already exists" message which is
+  // not an actual error when we're hot-reloading
+    if (!/already exists/.test(err.message)) {
+    console.error('Firebase initialization error', err.stack)
+  }
+}
 
 export default class AddPhoto extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+		  image : ""
+		};
+	}
+
+	_displayPhoto(image) {
+		const displayPhoto = {
+	      component: DisplayPhoto,
+	      title: 'Uploaded Photo',
+	      passProps: { myImage: image }
+	    };
+	    this.props.navigator.push(displayPhoto);
+	 }
+
+	_addPhoto() {
+		ImagePicker.openPicker({
+		  cropping: false
+		}).then(image => {
+		  console.log(image);
+		  this._displayPhoto(image);
+		});
+	}
+
 	render() {
 		return (
 	      <View style={{flex: 1}}>
-	      	<TouchableOpacity style={styles.footerButton}>
+	      	<TouchableOpacity onPress={() => this._addPhoto()} style={styles.footerButton}>
 	      		<Text style={styles.buttonText}>Post</Text>
 	      	</TouchableOpacity>
 	      </View>
@@ -40,7 +78,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: '#ffa',
     fontSize: 24,
   },
 });
