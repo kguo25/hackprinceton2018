@@ -5,21 +5,29 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity,
+  NavigatorIOS,
 } from 'react-native';
-import MyMap from './components/map';
+import MainScreen from './components/MainScreen';
 
 type Props = {};
 export default class App extends Component {
   render() {
     return (
-      <View style={{flex: 1}}>
-        <MyMap />
-      </View>
+      <NavigatorIOS
+        initialRoute={{
+          component: MainScreen,
+          title: 'Let\'s Explore!',
+        }}
+        style={{flex: 1}}
+      />
     );
   }
 }
+
